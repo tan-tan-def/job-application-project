@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<head th:fragment = "fragment-header">
+    <title>Work CV</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" th:href="@{/assets/css/open-iconic-bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/animate.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/magnific-popup.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/owl.theme.default.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/aos.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/ionicons.min.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap-datepicker.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/jquery.timepicker.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/css/bootstrap-reboot.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/css/mixins/_text-hide.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/flaticon.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/icomoon.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap/bootstrap-grid.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/bootstrap/bootstrap-reboot.css}">
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+    <!-- JS -->
+    <script th:src="@{/assets/js/jquery.min.js}"></script>
+    <script th:src="@{/assets/js/jquery-migrate-3.0.1.min.js}"></script>
+    <script th:src="@{/assets/js/popper.min.js}"></script>
+    <script th:src="@{/assets/js/bootstrap.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.easing.1.3.js}"></script>
+    <script th:src="@{/assets/js/jquery.waypoints.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.stellar.min.js}"></script>
+    <script th:src="@{/assets/js/owl.carousel.min.js}"></script>
+    <script th:src="@{/assets/js/jquery.magnific-popup.min.js}"></script>
+    <script th:src="@{/assets/js/aos.js}"></script>
+    <script th:src="@{/assets/js/jquery.animateNumber.min.js}"></script>
+    <script th:src="@{/assets/js/scrollax.min.js}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false"></script>
+    <script th:src="@{/assets/js/google-map.js}"></script>
+    <script th:src="@{/assets/js/main.js}"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/29.0.0/classic/ckeditor.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+</head>
+<body>
+<div th:fragment = "fragment-navbar">
+<nav class="header_menu navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <!--        class="navbar navbar-expand-lg overlay_navbar"-->
+    <div class="container-fluid px-md-4	">
+        <a class="navbar-brand" th:href="@{/}">Work CV</a>
+
+        <div class="collapse navbar-collapse" id="ftco-nav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active"><a th:href="@{/}" class="nav-link">Trang chủ</a></li>
+                <li class="nav-item"><a th:href="@{/user/category}" class="nav-link">Công việc</a></li>
+                <li class="nav-item" sec:authorize="hasAuthority('RECRUITER')"><a  th:href="@{/recruiter/list-candidates-of-company}" class="nav-link">Ứng cử viên</a></li>
+                <li class="nav-item mr-md-1" sec:authorize="hasAuthority('RECRUITER')"><a class="nav-link" onclick="postJobSwal()" >Đăng tuyển</a></li>
+                <li class="nav-item cta-colored" sec:authorize="!isAuthenticated()"><a th:href="@{/login}" class="nav-link btn btn-secondary" >Đăng nhập</a></li>
+                <li class="btn-group" sec:authorize="isAuthenticated()">
+                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:white" sec:authentication="principal.fullName"></button>
+<!--                    sec:authentication="principal.fullName"-->
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li sec:authorize="hasAuthority('RECRUITER')"><a class="dropdown-item" th:href="@{/recruiter/profile}">Hồ Sơ</a></li>
+                        <li sec:authorize="hasAuthority('APPLICANT')"><a class="dropdown-item" th:href="@{/applicant/profile}">Hồ Sơ</a></li>
+                        <li sec:authorize="hasAuthority('APPLICANT')"><a class="dropdown-item" th:href="@{/applicant/list-save-job}">Công việc đã lưu</a></li>
+                        <li sec:authorize="hasAuthority('RECRUITER')"><a class="dropdown-item" th:href="@{/recruiter/list-post}">Danh sách bài đăng</a></li>
+                        <li sec:authorize="hasAuthority('APPLICANT')"><a class="dropdown-item" th:href="@{/applicant/get-list-apply}">Công việc đã ứng tuyển</a></li>
+                        <li sec:authorize="hasAuthority('APPLICANT')"><a class="dropdown-item" th:href="@{/applicant/get-list-company}">Công ty đã theo dõi</a></li>
+                        <li><a class="dropdown-item" th:href="@{/logout}" >Đăng xuất</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+    <!-- Modal 2-->
+    <div sec:authorize="isAuthenticated()" class="modal fade" id="exampleModalUpdate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Vui lòng cập nhật hồ sơ trước khi đăng tuyển</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Cập nhật hồ sơ của : <span sec:authentication="principal.fullName"></span>
+                    <form th:action="@{/recruiter/profile}" method="get">
+                        <div class="modal-footer mt-1">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Modal 2-->
+</div>
+</body>
+
+</html>

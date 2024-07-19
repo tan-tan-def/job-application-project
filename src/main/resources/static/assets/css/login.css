@@ -1,0 +1,99 @@
+:root {
+  --success-color: #2691d9;
+  --error-color: #e74c3c;
+}
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+body {
+  height: 100vh;
+  background: linear-gradient(120deg, #3ca7ee, #9b408f);
+  /* overflow: hidden; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Roboto", sans-serif;
+}
+.container {
+  background: white;
+  width: 400px;
+  border: none;
+  border-radius: 10px;
+  padding: 40px;
+}
+.container h1 {
+  text-align: center;
+}
+.form-control {
+  width: 100%;
+  position: relative;
+  margin-top: 20px;
+}
+.form-control input,
+.form-control select {
+  width: 100%;
+  height: 40px;
+  border: none;
+  font-size: 16px;
+  outline: none;
+  border-bottom: 2px solid #adadad;
+}
+.form-control span {
+  position: absolute;
+  border-bottom: 3px solid var(--success-color);
+  width: 0%;
+  top: 38px;
+  left: 0%;
+  transition: 0.3s;
+}
+
+.form-control input:focus ~ span,
+.form-control select:focus ~ span {
+  width: 100%;
+}
+
+.form-control.error small {
+  color: var(--error-color);
+}
+.form-control.error input,
+.form-control.error select {
+  border-bottom: 2px solid var(--error-color);
+}
+button,
+.login-button {
+  background: var(--success-color);
+  width: 100%;
+  height: 50px;
+  border-radius: 25px;
+  border: none;
+  outline: none;
+  margin-top: 25px;
+  font-size: 20px;
+  color: white;
+  font-weight: 400;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.signup-link {
+  text-align: center;
+  padding-top: 20px;
+  font-size: 18px;
+}
+.signup-link a {
+  color: var(--success-color);
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.signup-link a:hover {
+  text-decoration: underline;
+}
+button:hover {
+  background-color: #08609a;
+}
+.form-control select .option-empty {
+  color: #adadad;
+  display: none;
+}

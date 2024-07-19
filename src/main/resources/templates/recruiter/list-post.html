@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="~{fragments/header :: fragment-header}"></head>
+<body>
+<div th:replace="~{fragments/header :: fragment-navbar}"></div>
+<div class="hero-wrap hero-wrap-2" style="background-image: url('/assets/images/bg_1.jpg');" data-stellar-background-ratio="0.5" >
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-start">
+            <div class="col-md-12 text-center mb-5">
+                <p class="breadcrumbs mb-0"><span class="mr-3"><a th:href="@{/}">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span>Danh sách <span></span></p>
+                <h1 class="mb-3 bread">Danh sách bài đăng</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:if="${message!=''}" class="toast" data-delay="2500" style="position:fixed; top: 100PX; left: 10PX;z-index: 2000;width: 300px">
+    <script>
+        swal({
+            title: '[[${message}]]',
+            /* text: 'Redirecting...', */
+            icon: 'success',
+            timer: 3000,
+            buttons: true,
+            type: 'success'
+        })
+    </script>
+</div>
+<!--<div th:if="${error}" class="toast" data-delay="2500" style="position:fixed; top: 100PX; left: 10PX;z-index: 2000;width: 300px">-->
+<!--    <script>-->
+<!--        swal({-->
+<!--            title: 'Bài đăng đang có người ứng tuyển!',-->
+<!--            /* text: 'Redirecting...', */-->
+<!--            icon: 'error',-->
+<!--            timer: 3000,-->
+<!--            buttons: true,-->
+<!--            type: 'error'-->
+<!--        })-->
+<!--    </script>-->
+<!--</div>-->
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 pr-lg-4">
+                <div class="row">
+                    <th:block th:if="${totalPages == 0}">
+                        <div class="row form-group company-website-tw d-block" >
+                            <label>Danh sách bài tuyển dụng </label> <br>
+                            <div class="col-md-12">
+                                <a  class="btn px-4 btn-primary text-white" onclick="postJobSwal()">Đăng tuyển</a>
+<!--                                th:href="@{/recruiter/post-job}"-->
+                            </div>
+                        </div>
+                    </th:block>
+
+                    <th:block th:if="${totalPages > 0}" th:each="recruitment, iterStat: ${list}">
+                        <div class="col-md-12 ">
+                            <div class="job-post-item p-4 d-block d-lg-flex align-items-center">
+                                <div class="one-third mb-4 mb-md-0">
+                                    <div class="job-post-item-header align-items-center">
+                                        <span class="subadge" th:text="${recruitment.type}"></span>
+                                        <h2 sec:authorize="not hasAuthority('RECRUITER')" class="mr-3 text-black" ><a th:text="${recruitment.title}" th:href="@{'/user/detail-post/' + ${recruitment.id}}"></a></h2>
+                                        <h2 sec:authorize="hasAuthority('RECRUITER')" class="mr-3 text-black" ><a th:text="${recruitment.title}" th:href="@{'/recruiter/detail-post/' + ${recruitment.id}}"></a></h2>
+
+                                    </div>
+                                    <div class="job-post-item-body d-block d-md-flex">
+                                        <div class="mr-3"><span class="icon-layers"></span> <a th:href="@{'/user/detail-company/' + ${recruitment.company.id}}" th:text="${recruitment.company.nameCompany}" ></a></div>
+                                        <div class="mr-3"><span class="icon-my_location"></span> <span th:text="${recruitment.address}"></span></div>
+                                        <div class="mr-3"><span class="ion-android-person"> </span> <span th:text="${recruitment.totalApplyPeople}"></span></div>
+                                        <div><span th:inline="text">Id: </span><span th:text="${(currentPage - 1)*5 + iterStat.index + 1}"></span></div>
+                                    </div>
+                                </div>
+
+                                <div class="one-forth ml-auto d-flex align-items-center mt-4 md-md-0" style="width: 330px !important;">
+                                    <a th:href="@{'/recruiter/detail-post/' +${recruitment.id}}"  class="btn btn-primary py-2 ml-2">Xem chi tiết</a>
+                                    <a th:href="@{'/recruiter/edit-post/' +${recruitment.id}}"  class="btn btn-warning py-2 ml-2">Cập nhật</a>
+                                    <a class="btn btn-danger py-2 ml-2" data-toggle="modal" th:data-target="${'#exampleModalDelete'} + ${recruitment.id}">Xóa</a>
+                                </div>
+                            </div>
+                        </div><!-- end -->
+                        <!-- Modal Delete-->
+                        <div class="modal fade" th:id="${'exampleModalDelete'} + ${recruitment.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Bạn có chắc chắn muốn xóa ?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bài đăng: <span th:text="${recruitment.title}"></span>
+                                        <br>
+                                        <div style="font-weight: bold; color:red;" th:if="${recruitment.totalApplyPeople>0}">
+                                            Hiện có: <span th:text="${recruitment.totalApplyPeople}"></span> người đang tham gia ứng tuyển.
+
+                                        </div>
+                                        <form th:action="@{/recruiter/delete}" method="post">
+                                            <input type="hidden" class="form-control" id="id" name="idRecruitment" th:value="${recruitment.id}">
+                                            <div class="modal-footer mt-1">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                                <button type="submit" class="btn btn-danger">Xóa</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal Delete-->
+                        <!-- Modal 2-->
+                        <div sec:authorize="isAuthenticated()" class="modal fade" id="exampleModalUpdate" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Vui lòng cập nhật hồ sơ trước khi đăng tuyển</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Cập nhật hồ sơ của : <span sec:authentication="principal.fullName"></span>
+                                        <form th:action="@{/recruiter/profile}" method="get">
+                                            <div class="modal-footer mt-1">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                                <button type="submit" class="btn btn-primary">Cập nhật</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal 2-->
+                    </th:block>
+                </div>
+                <div class="row mt-5">
+                    <div class="col text-center">
+                        <div class="block-27">
+                            <ul>
+                                <li th:if="${currentPage>1}"><a th:href="@{'/recruiter/list-post'+'?pageNo='+${currentPage-1}}">&lt;</a></li>
+                                <li class="active"><a th:href="@{'/recruiter/list-post'+'?pageNo='+${currentPage}}" th:text="${currentPage}"></a></li>
+                                <li th:if="${currentPage<totalPages}"><a th:href="@{'/recruiter/list-post'+'?pageNo='+${currentPage+1}}">&gt;</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <span th:text="${currentPage + '/' + totalPages + ' trang'}"
+                          style="font-size: 1em; bottom: 10px; right: 10px; color: white; background-color: #007bff; padding: 5px 10px; border-radius: 5px;">
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+
+<script>
+    ClassicEditor.create(document.querySelector('#editorN')).then(eidt => {
+        console.log("da" + eidt);
+    })
+        .catch(error => {
+            console.error(error);
+        });
+</script>
+</body>
+<script th:src="@{/assets/js/save-apply-job.js}"></script>
+</html>

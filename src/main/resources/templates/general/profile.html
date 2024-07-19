@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: fragment-header}"></head>
+<body>
+<div sec:authorize="isAuthenticated()" th:replace="~{fragments/header :: fragment-navbar}"></div>
+<div th:if="${message!=''}" class="toast" data-delay="2000" style="position:fixed;top: 100PX; right: 10PX;z-index: 2000;width: 300px">
+    <script>
+        swal({
+            title: '[[${message}]]',
+            /* text: 'Redirecting...', */
+            icon: 'success',
+            timer: 3000,
+            buttons: true,
+            type: 'success'
+        })
+    </script>
+</div>
+
+<div class="hero-wrap hero-wrap-2" style="background-image: url(/assets/images/bg_1.jpg);" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-start">
+            <div class="col-md-12 text-center mb-5">
+                <h1 class="mb-3 bread">Hồ sơ </h1>
+                <div class="form-group">
+                    <label sec:authorize="isAuthenticated()" class="btn btn-primary btn-md btn-file">
+                        Chọn ảnh
+                        <input type="file" id="fileUpload" accept="image/png, image/jpeg, image/jpg" hidden>
+                    </label>
+                </div>
+                <div style="margin-left: 0px" id="divImage" th:if="${userInformation!=null}">
+                    <img id="avatar" height="100" width="100" style="border-radius: 50px" th:src="${userInformation.image != null ? '/' + userInformation.imagePath : 'https://st.quantrimang.com/photos/image/072015/22/avatar.jpg'}">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Email Verification -->
+<div th:if="${userInformation.status == 0 && userInformation.roleId == 2}" class="container-fluid" style="text-align: center">
+    <p style="font-size: 20px;font-weight: bold;color: #aaa;margin-top: 10px">Xác thực email đăng nhập</p>
+    <div style="width: 600px;height: 400px;border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 10px;margin: 20px auto;padding: 15px">
+        <p style="line-height: 35px;font-size: 16px">Xin chào, <span th:text="${userInformation.fullName}" ></span> và làm theo hướng dẫn trong email.
+            Trường hợp không nhận được email, bạn vui lòng bấm nút Nhận email xác thực dưới đây.</p>
+        <div class="row form-group">
+            <form method="post" th:action="@{/confirm-account}" class="col-md-12">
+                <input type="hidden" th:value="${userInformation.email}" name="email" class="btn px-4 btn-primary text-white">
+                <input type="submit" value="Nhận email xác thực" class="btn px-4 btn-primary text-white">
+            </form>
+        </div>
+        <p>Mọi thắc mắc vui lòng liên hệ bộ phận CSKH của WorkCV:<br></p>
+        - Điện thoại:<span style="color:#5f80ec">(024) 6680 5588</span><br>
+        - Email: <a href="#" style="color:#5f80ec"> hotro@workcv.vn</a>
+    </div>
+    <div th:if="${confirm_await}" style="width: 600px;height: 400px;border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 10px;margin: 20px auto;padding: 15px">
+        <p style="line-height: 35px;font-size: 16px">Xin chào, <span th:text="${userInformation.fullName}" ></span> .Bạn đã gửi yêu cầu xác thực thành công,
+            vui lòng kiểm tra mail để xác thực.Cảm ơn bạn!!!
+        </p>
+        <p>Mọi thắc mắc vui lòng liên hệ bộ phận CSKH của WorkCV:<br></p>
+        - Điện thoại:<span style="color:#5f80ec">(024) 6680 5588</span><br>
+        - Email: <a href="#" style="color:#5f80ec"> hotro@workcv.vn</a>
+    </div>
+</div>
+<!-- Email Verification -->
+<!--===============================================================================================================-->
+<!--The link for watching or deleting CV of Applicant, update information's applicant-->
+<section class="site-section" style="margin-top: 10px" sec:authorize="hasAuthority('APPLICANT')">
+    <div class="container">
+        <form enctype="multipart/form-data" th:action="@{/applicant/upload-cv}">
+            <div class="row align-items-center mb-5">
+                <div class="col-lg-8 ">
+                    <div class="d-flex align-items-center">
+                        <div class="form-group" style="margin-top: 15px">
+                            <label class="btn btn-primary btn-md btn-file">
+                                Chọn cv (pdf)
+                                <input type="file" name="file-cv" id="fileUpload1" accept=".pdf" required hidden>
+                            </label>
+                        </div>
+                    </div>
+                    <p id="cvName1" th:if="${Cv!=null}" th:text="${Cv != null ? Cv.fileName :'Chưa cập nhật'}"></p>
+                    <a id="nameCv" class="btn btn-primary" th:if="${Cv !=null}" th:href="${'/'+Cv.fileNamePath}" target="_blank">Xem cv</a>
+                    <a id="deleteCv" style="margin-left: 20px" class="btn btn-danger" th:if="${Cv !=null}" data-toggle="modal" data-target="#exampleModal" >Xóa cv</a>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--Update the information of applicant-->
+        <form th:action="@{/applicant/update-profile}" method="post" onsubmit="return validateForm()" th:object="${userInformation}">
+            <div class="row align-items-center mb-5">
+                <div class="col-lg-8 mb-4 mb-lg-0">
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <h2>Cập nhật thông tin</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="row">
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-block btn-primary btn-md">Lưu thông tin</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-5">
+                <div class="col-lg-12">
+                    <div class="p-4 p-md-5 border rounded">
+                        <h3 class="text-black mb-5 border-bottom pb-2">Thông tin chi tiết</h3>
+                        <div class="form-group">
+                            <label for="job-email">Email</label>
+                            <input type="email" class="form-control" id="job-email" th:field="*{email}" th:value="${userInformation.email != null ? userInformation.email : null}" placeholder="you@yourdomain.com" >
+                            <small style="color:red;"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-full-name">Full name</label>
+                            <input type="text" class="form-control" id="job-full-name" th:field="*{fullName}" th:value="${userInformation.fullName != null ? userInformation.fullName : null}" placeholder="Full name">
+                            <small style="color:red;"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-location">Địa chỉ</label>
+                            <input type="text" class="form-control" id="job-location" th:field="*{address}" th:value="${userInformation.address != null ? userInformation.address : null}" placeholder="e.g. New York">
+                            <small style="color:red;"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-phone-number">Số điện thoại</label>
+                            <input type="text" class="form-control" id="job-phone-number" th:field="*{phoneNumber}" th:value="${userInformation.phoneNumber != null ? userInformation.phoneNumber : null}" placeholder="+ 84">
+                            <small style="color:red;"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="job-description">Mô tả bản thân</label>
+                            <textarea class="form-control" id="job-description" th:field="*{description}" th:text="${userInformation.description != null ? userInformation.description : null}" placeholder="Mô tả"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!--Update the information of applicant-->
+    </div>
+</section>
+<!--The link for watching or deleting CV of Applicant, update information's applicant-->
+<!--===============================================================================================================-->
+<!-- Modal delete CV of Applicant-->
+<div class="modal fade"  id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Bạn có chắc chắn muốn xóa ?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Cv : <span id="cvXoa" ></span>
+                <span th:if="${Cv != null}" th:text="${Cv.fileName}"></span>
+                <form th:action="@{/applicant/deleteCv}" method="post">
+                    <div class="modal-footer mt-1" >
+                        <input type="hidden" th:if="${Cv!=null}" name="idCv" th:value="${Cv.id}">
+                        <button type="submit" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                        <button type="submit" class="btn btn-danger">Xóa</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal delete CV of Applicant -->
+<!--===============================================================================================================-->
+<!--Information of company and recruiter-->
+<section  class="site-section" style="margin-top: 10px" sec:authorize="hasAuthority('RECRUITER')">
+    <div class="container">
+        <div class="row">
+            <!-- Information of recruiter -->
+            <div class="col-lg-6 mb-5">
+                <h2 class="mb-4">Thông tin cá nhân</h2>
+                <form th:action="@{/recruiter/update-recruiter}" method="post" onsubmit="return validateForm()" th:object="${userInformation}" >
+                    <div class="row mb-5">
+                        <div class="col-lg-12">
+                            <div class="p-4 p-md-5 border rounded">
+                                <div class="form-group">
+                                    <label for="job-email">Email</label>
+                                    <input type="email" class="form-control" id="job-email" th:field="*{email}" th:value="${userInformation.email}" placeholder="you@yourdomain.com">
+                                    <small style="color:red;"></small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-full-name">Họ và tên</label>
+                                    <input type="text" class="form-control" id="job-full-name"  th:field="*{fullName}" th:value="${userInformation.fullName}" placeholder="Full name">
+                                    <small style="color:red;"></small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-location">Địa chỉ</label>
+                                    <input type="text" class="form-control" id="job-location" th:field="*{address}" th:value="${userInformation.address != null ? userInformation.address : null}" placeholder="e.g. New York">
+                                    <small style="color:red;"></small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-phone-number">Số điện thoại</label>
+                                    <input type="text" class="form-control" id="job-phone-number" th:field="*{phoneNumber}" th:value="${userInformation.phoneNumber != null ? userInformation.phoneNumber : null}"  placeholder="+ 84">
+                                    <small style="color:red;"></small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-description">Mô tả bản thân</label>
+                                    <textarea  th:field="*{description}" id="job-description" th:text="${userInformation.description != null ? userInformation.description : null}" class="form-control" placeholder="Mô tả"></textarea>
+                                </div>
+                                <div class="row form-group">
+                                    <div class="col-md-12">
+                                        <input type="submit" value="Lưu thông tin" class="btn px-4 btn-primary text-white">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!--            Information of recruiter-->
+            <!--===============================================================================================================-->
+            <!--            Information of company-->
+            <div class="col-lg-6">
+                <h2 class="mb-4">Thông tin công ty</h2>
+                <div class="form-group company-website-tw d-block1">
+                    <label for="fileUpload2">Cập nhật Logo</label> <br>
+                    <label class="btn btn-primary btn-md btn-file">
+                        Chọn logo<input type="file" id="fileUpload2" accept="image/png, image/jpeg, image/jpg" hidden required>
+                    </label>
+                    <div id="divLogo">
+                        <img id="avatar1" height="100" width="100" style="border-radius: 50px" th:src="${companyInformation.logo != null ? '/' + companyInformation.logoPath : 'https://st.quantrimang.com/photos/image/072015/22/avatar.jpg'}">
+                    </div>
+                </div>
+
+                <form th:action="@{/recruiter/update-company}" th:object="${companyInformation}" method="post" onsubmit="return validateFormCompany()">
+                    <div class="row mb-5">
+                        <div class="col-lg-12">
+                            <div class="p-4 p-md-5 border rounded">
+                                <div class="form-group">
+                                    <label for="job-email">Email</label>
+                                    <input type="text" class="form-control" id="job-email-company" th:field="*{email}" th:value="${companyInformation.email != null ? companyInformation.email : null }" placeholder="you@yourdomain.com">
+                                    <small style="color:red;"></small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-full-name">Tên công ty</label>
+                                    <input type="text" class="form-control" id="job-full-name-company" th:field="*{nameCompany}" th:value="${companyInformation.nameCompany != null ? companyInformation.nameCompany : null }" placeholder="Full name">
+                                    <input type="hidden" class="form-control" id="job-title" name="user_id" th:value="${companyInformation.user.id != null ? companyInformation.user.id : null}" placeholder="Full name">
+                                    <input type="hidden" class="form-control" id="job-title" name="id" th:value="${companyInformation.id !=null ? companyInformation.id : null}" placeholder="Full name">
+                                    <small style="color:red;"></small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-location">Địa chỉ</label>
+                                    <input type="text" class="form-control" id="job-location-company" th:field="*{address}" th:value="${companyInformation.address != null ? companyInformation.address : null}" placeholder="e.g. New York">
+                                    <small style="color:red;"></small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-phone-number">Số điện thoại công ty</label>
+                                    <input type="text" class="form-control" id="job-phone-number-company" th:field="*{phoneNumber}" th:value="${companyInformation.phoneNumber != null ? companyInformation.phoneNumber : null}" placeholder="+ 84">
+                                    <small style="color:red;"></small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-description">Mô tả công ty</label>
+                                    <textarea class="form-control" id="job-description" th:field="*{description}" th:text="${companyInformation.description != null ? companyInformation.description : null}" placeholder="Mô tả"></textarea>
+                                </div>
+
+                                <div style="margin-left: 0px" id="divImag1">
+                                    <img id="avatar1-same" height="100" width="100" style="border-radius: 50px;margin-bottom: 15px" th:src="${companyInformation.logo != null ? '/' + companyInformation.logoPath : 'https://st.quantrimang.com/photos/image/072015/22/avatar.jpg'}">
+                                </div>
+                                <div class="row form-group" >
+                                    <div class="col-md-12">
+                                        <input type="submit" value="Lưu thông tin" class="btn px-4 btn-primary text-white">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!--            Information of company-->
+        </div>
+    </div>
+</section>
+<!--Information of company-->
+
+<script>
+    ClassicEditor.create(document.querySelector('#editor')).then(eidt => {
+        console.log("da" + eidt);
+    })
+        .catch(error => {
+            console.error(error);
+        });
+    ClassicEditor.create(document.querySelector('#editorN')).then(eidt => {
+        console.log("da" + eidt);
+    })
+        .catch(error => {
+            console.error(error);
+        });
+</script>
+</body>
+<script th:src="@{/assets/js/save-apply-job.js}"></script>
+<script th:src="@{/assets/js/upload-file.js}"></script>
+<script th:src="@{/assets/js/validate-profile.js}"></script>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập</title>
+    <link rel="stylesheet" th:href="@{/assets/css/login.css}" />
+  </head>
+  <body>
+    <div class="container">
+      <form th:action="@{/login}" method="post">
+        <h1>Đăng nhập</h1>
+        <h1 th:text="${message_verification}" style="color:green; font-size:17px"></h1>
+        <div class="form-control">
+          <input id="email" type="email" name="email" placeholder="email" />
+          <div th:if="${param.error}">
+            <small style="color:red;">Your email or password is not correct</small>
+          </div>
+          <span></span>
+        </div>
+
+        <div class="form-control">
+          <input id="password" type="password" placeholder="password" name="password"/>
+          <div th:if="${param.error}">
+            <small style="color:red">Your email or password is not correct</small>
+          </div>
+          <span></span>
+        </div>
+        <input type="submit" class="login-button" value="Đăng nhập"/>
+        <div class="signup-link">
+          Chưa có tài khoản? <a th:href="@{/register/show-form-for-register}">Đăng kí</a>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng kí</title>
+    <link rel="stylesheet" th:href="@{/assets/css/login.css}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <form th:action="@{/register/sign-up}" method="post" onsubmit="return validateFormCompany()" th:object="${newUser}">
+        <h1>Đăng kí</h1>
+        <div class="form-control">
+          <input id="email" type="email" th:field="*{email}" placeholder="email" />
+          <small id="emailMsg"></small>
+          <span></span>
+        </div>
+
+        <div class="form-control">
+          <input id="full-name" type="text" th:field="*{fullName}" placeholder="Họ và tên"/>
+          <small></small>
+          <span></span>
+        </div>
+
+        <div class="form-control">
+          <input id="password" type="password" th:field="*{password}" placeholder="Mật khẩu"/>
+          <small></small>
+          <span></span>
+        </div>
+
+        <div class="form-control">
+          <input id="confirm-password" type="password" placeholder="confirm password" name="Nhập lại mật khẩu"/>
+          <small></small>
+          <span></span>
+        </div>
+        <div class="form-control">
+          <select id="role-select" name="roleId">
+            <option class="option-empty" value="">Vai trò</option>
+            <option value="2">Nhà tuyển dụng</option>
+            <option value="1">Người xin việc</option>
+            </select>
+          <small></small>
+          <span></span>
+        </div>
+        <button id="button-register" type="submit">Đăng kí</button>
+        <div class="signup-link">Quay trở lại <a th:href="@{/login}">Đăng nhập</a></div>
+      </form>
+    </div>
+  </body>
+  <script th:src="@{/assets/js/login.js}"></script>
+
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: fragment-header}"></head>
+</head>
+<body>
+<div th:replace="~{fragments/header :: fragment-navbar}"></div>
+<div th:if="${message!=null}" class="toast" data-delay="2000" style="position:fixed;top: 100PX; right: 10PX;z-index: 2000;width: 300px">
+    <script>
+        swal({
+            title: '[[${message}]]',
+            /* text: 'Redirecting...', */
+            icon: 'success',
+            timer: 3000,
+            buttons: true,
+            type: 'success'
+        })
+    </script>
+</div>
+
+<div class="hero-wrap hero-wrap-2" style="background-image: url('/assets/images/bg_1.jpg');" data-stellar-background-ratio="0.5" >
+<!--    th:if="${session.user.role.id == 1 }"-->
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-end justify-content-start">
+            <div class="col-md-12 text-center mb-5">
+                <p class="breadcrumbs mb-0"><span class="mr-3"><a th:href="@{/}">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span>Công việc <span></span></p>
+                <h1 class="mb-3 bread">Danh sách công việc đã ứng tuyển</h1>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 pr-lg-5">
+                <div th:if="${totalPages > 0}" class="row">
+                    <th:block th:each="applyPost : ${applyPostList}">
+                        <div class="col-md-12 ">
+                            <div class="job-post-item p-4 d-block d-lg-flex align-items-center">
+                                <div class="one-third mb-4 mb-md-0">
+                                    <div class="job-post-item-header align-items-center">
+                                        <span class="subadge" th:text="${applyPost.recruitment.type}"></span>
+                                        <h2 class="mr-3 text-black" ><a th:text="${applyPost.recruitment.title}" th:href="@{'/user/detail-post/' +${applyPost.recruitment.id}}"></a></h2>
+                                    </div>
+                                    <div class="job-post-item-body d-block d-md-flex">
+                                        <div class="mr-3"><span class="icon-layers"></span> <a href="@{'/user/detail-company/'+${applyPost.recruitment.company.id}}" th:text="${applyPost.recruitment.company.nameCompany}" ></a></div>
+                                        <div><span class="icon-my_location"></span> <span th:text="${applyPost.recruitment.address}"></span></div>
+                                    </div>
+                                </div>
+                                <input type="hidden" th:id="${'idRe'}+${applyPost.recruitment.id}" th:value="${applyPost.recruitment.id}">
+                                <div class="one-forth ml-auto d-flex align-items-center mt-4 md-md-0">
+                                    <div>
+                                        <a data-toggle="modal" th:data-target="${'#exampleModalDelete'}+${applyPost.id}" class="icon text-center d-flex justify-content-center align-items-center icon mr-2">
+                                            <span class="icon-delete"></span>
+                                        </a>
+                                    </div>
+                                    <p th:if="${applyPost.status == 1}" style="color: #1e7e34;font-weight: bold;margin-top: 10px">Đã duyệt</p>
+                                    <p th:if="${applyPost.status == 0}" style="color: red;font-weight: bold;margin-top: 10px">Đợi duyệt</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end -->
+
+                        <!-- Modal 2-->
+                        <div class="modal fade" th:id="${'exampleModalDelete'} + ${applyPost.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Bạn có chắc chắn muốn xóa ?</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Công việc ứng tuyển : <span th:text="${applyPost.recruitment.title}"></span>
+                                        <form th:action="@{/applicant/delete-apply-post}" method="post">
+                                            <input type="hidden" class="form-control" id="id" name="idApplyPost" th:value="${applyPost.id}">
+                                            <div class="modal-footer mt-1">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                                <button type="submit" class="btn btn-danger">Xóa</button>
+                                            </div>
+                                        </form>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal 2-->
+                    </th:block>
+                </div>
+
+                <div style="text-align: center" th:if="${totalPages < 1}">
+                    <p style="color:red;">Danh sách trống</p>
+                </div>
+                <div class="row mt-5">
+                    <div class="col text-center">
+                        <div class="block-27">
+                            <ul>
+                                <li th:if="${currentPage>1}"><a th:href="@{'/applicant/get-list-apply'+'?pageNo='+${currentPage-1}}">&lt;</a></li>
+                                <li class="active"><a th:href="@{'/applicant/get-list-apply'+'?pageNo='+${currentPage}}" th:text="${currentPage}"></a></li>
+                                <li th:if="${currentPage<totalPages}"><a th:href="@{'/applicant/get-list-apply'+'?pageNo='+${currentPage+1}}">&gt;</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <span th:text="${currentPage + '/' + totalPages + ' trang'}"
+                          style="font-size: 1em; bottom: 10px; right: 10px; color: white; background-color: #007bff; padding: 5px 10px; border-radius: 5px;">
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+</body>
+</html>

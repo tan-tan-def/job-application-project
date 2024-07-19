@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: fragment-header}"></head>
+<body>
+<div th:replace="~{fragments/header :: fragment-navbar}"></div>
+<!-- END nav -->
+
+<div class="hero-wrap hero-wrap-2" style="background-image: url('/assets/images/bg_1.jpg');" data-stellar-background-ratio="0.5" >
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row no-gutters slider-text align-items-end justify-content-start">
+      <div class="col-md-12 text-center mb-5">
+        <p class="breadcrumbs mb-0"><span class="mr-3"><a th:href="@{/}">Trang chủ <i class="ion-ios-arrow-forward"></i></a></span> Cập nhập<span></span></p>
+        <h1 class="mb-3 bread">Cập nhật bài tuyển dụng</h1>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:if="${success}" class="toast" data-delay="2500" style="position:fixed; top: 100PX; left: 10PX;z-index: 2000;width: 300px">
+  <div class="toast-header" style="background-color: #1c7430">
+    <strong class="mr-auto" style="color: white">Thông báo</strong>
+    <small style="color: white">Vừa xong</small>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true" style="color: white">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body" >
+    <p th:text="'✅ ' +${success}"></p>
+  </div>
+  <script>
+    $(document).ready(function(){
+      $('.toast').toast('show');
+    });
+  </script>
+</div>
+<section class="section-hero overlay inner-page bg-image" style="background-image: url('images/hero_1.jpg');" id="home-section" >
+  <div class="container">
+    <div class="row">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Cập nhật</h1>
+        <div class="custom-breadcrumbs">
+          <a th:href="@{/recruiter/list-post}">Danh sách</a> <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>Cập nhật bài tuyển dụng</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="site-section">
+  <div class="container">
+    <form th:action="@{/recruiter/edit}" method="post" th:object="${recruitment}">
+      <input type="hidden" class="form-control" id="job-location"  name="id" th:value="${recruitment.id}">
+      <input type="hidden" class="form-control" id="job-location"  name="createdAt" th:value="${recruitment.createdAt}">
+      <div class="row align-items-center mb-5">
+        <div class="col-lg-8 mb-4 mb-lg-0">
+          <div class="d-flex align-items-center">
+            <div>
+              <h2>Cập nhật bài đăng</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-5">
+        <div class="col-lg-12">
+          <div class="p-4 p-md-5 border rounded">
+            <h3 class="text-black mb-5 border-bottom pb-2">Chi tiết bài tuyển dụng</h3>
+
+            <div class="form-group">
+              <label for="email">Tiêu đề</label>
+              <input class="form-control" id="email" type="text" th:field="*{title}" th:value="${recruitment.title}" required >
+            </div>
+            <div class="form-group">
+              <label for="editorN">Mô tả công việc</label>
+              <textarea class="form-control" id="editorN" th:field="*{description}" th:text="${recruitment.description!=null ? recruitment.description :null}"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="job-experience">Kinh nghiệm</label>
+              <input class="form-control" id="job-experience" type="text"  th:field="*{experience}" th:value="${recruitment.experience}" required>
+            </div>
+            <div class="form-group">
+              <label for="job-quantity">Số người cần tuyển</label>
+              <input class="form-control" id="job-quantity" type="number" th:field="*{quantity}" th:value="${recruitment.quantity}" required>
+            </div>
+            <div class="form-group">
+              <label for="job-address">Địa chỉ</label>
+              <input class="form-control" id="job-address" type="text" th:field="*{address}" th:value="${recruitment.address}" required>
+            </div>
+            <div class="form-group">
+              <label for="job-deadline">Hạn ứng tuyển</label>
+              <input class="form-control" id="job-deadline" type="date" th:field="*{deadline}" th:value="${recruitment.deadline}" required>
+            </div>
+            <div class="form-group">
+              <label for="job-salary">Lương</label>
+              <input class="form-control" id="job-salary" type="text" th:field="*{salary}" th:value="${recruitment.salary}">
+            </div>
+
+            <div class="form-group">
+              <label>Loại công việc</label>
+              <select class="form-control" th:field="*{type}" aria-label="Default select example" required>
+                <option th:value="${recruitment.type}" th:text="${recruitment.type}" selected></option>
+                <option value="Part time">Part time</option>
+                <option value="Full time">Full time</option>
+                <option value="Freelancer">Freelancer</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Danh mục công việc</label>
+              <select class="form-control" th:field="*{category}" aria-label="Default select example" required>
+                <option th:value="${recruitment.category.id}" th:text="${recruitment.category.name}" selected></option>
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="row align-items-center mb-5">
+
+        <div class="col-lg-4 ml-auto">
+          <div class="row">
+            <div class="col-6">
+              <a href="#" class="btn btn-block btn-light btn-md"></a>
+            </div>
+            <div class="col-6">
+              <button type="submit" class="btn btn-block btn-primary btn-md">Cập nhật</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+<script>
+  ClassicEditor.create(document.querySelector('#editorN')).then(eidt => {
+    console.log("da" + eidt);
+  })
+          .catch(error => {
+            console.error(error);
+          });
+</script>
+</body>
+</html>

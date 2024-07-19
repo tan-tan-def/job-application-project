@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<head th:replace="~{fragments/header :: fragment-header}"></head>
+<body>
+<div th:replace="~{fragments/header :: fragment-navbar}"></div>
+<div th:if="${numberToShowSwal==1}" class="toast" data-delay="2000" style="position:fixed;top: 100PX; right: 10PX;z-index: 2000;width: 300px">
+    <script>
+        swal({
+            title: 'Đăng nhập thành công!',
+            /* text: 'Redirecting...', */
+            icon: 'success',
+            timer: 3000,
+            buttons: true,
+            type: 'success'
+        })
+    </script>
+</div>
+
+<div th:replace="~{fragments/search :: fragment-search}"></div>
+
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center mb-5">
+            <div style="display: block" class="col-md-7 heading-section text-center">
+                <span class="subheading">Danh mục công việc</span>
+                <h2 class="mb-0">Top Danh Mục</h2>
+            </div>
+        </div>
+        <div class="row" id="categorySection">
+            <th:block th:each="category, categoryStart : ${categories}" th:if="${categoryStart.index} < 4">
+            <div class="col-md-3 ">
+                <ul class="category text-center" >
+                    <li>
+                        <a style="text-decoration: none !important;" th:href="${'/search/search-another-category?categoryId='}+${category.id}">
+                            <p th:text="${category.name}"></p>
+                            <span class="number" th:text="${category.numberChoose}"></span>
+                            <span>Vị trí</span>
+                            <i class="ion-ios-arrow-forward"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            </th:block>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section services-section">
+    <div class="container">
+        <div class="row d-flex">
+            <div class="col-md-3 d-flex align-self-stretch ">
+                <div class="media block-6 services d-block">
+                    <div class="icon"><span class="flaticon-resume"></span></div>
+                    <div class="media-body">
+                        <h3 class="heading mb-3">Tìm kiếm hàng triệu việc làm</h3>
+                        <p>Dễ dàng tìm kiếm công việc phù hợp </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex align-self-stretch ">
+                <div class="media block-6 services d-block">
+                    <div class="icon"><span class="flaticon-team"></span></div>
+                    <div class="media-body">
+                        <h3 class="heading mb-3">Dễ dàng quản lý công việc</h3>
+                        <p>Quản lí công việc theo cách của bạn</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex align-self-stretch ">
+                <div class="media block-6 services d-block">
+                    <div class="icon"><span class="flaticon-career"></span></div>
+                    <div class="media-body">
+                        <h3 class="heading mb-3">Top Nghề nghiệp</h3>
+                        <p>Top công việc hàng đầu Việt Nam </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex align-self-stretch ">
+                <div class="media block-6 services d-block">
+                    <div class="icon"><span class="flaticon-employees"></span></div>
+                    <div class="media-body">
+                        <h3 class="heading mb-3">Chuyên gia Tìm kiếm</h3>
+                        <p>Thành công theo cách riêng của bạn</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 pr-lg-5">
+                <div class="row justify-content-center pb-3">
+                    <div class="col-md-12 heading-section ">
+                        <span class="subheading">CÔNG VIỆC ĐƯỢC NHIỀU NGƯỜI ỨNG TUYỂN</span>
+                        <h2 class="mb-4">Các bài đăng về việc làm nổi bật</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <th:block th:each="recruitment, recruitmentStart: ${recruitments}">
+                        <div class="col-md-12" th:if="${recruitmentStart.index} < 4">
+                            <div class="job-post-item p-4 d-block d-lg-flex align-items-center">
+                                <div class="one-third mb-4 mb-md-0">
+                                    <div class="job-post-item-header align-items-center">
+                                        <span class="subadge" th:text="${recruitment.type}"></span>
+                                        <h2 sec:authorize="hasAuthority('RECRUITER')" class="mr-3 text-black" ><a th:text="${recruitment.title}" th:href="@{'/recruiter/detail-post/' +${recruitment.id}}"></a></h2>
+                                        <h2 sec:authorize="not hasAuthority('RECRUITER')" class="mr-3 text-black" ><a th:text="${recruitment.title}" th:href="@{'/user/detail-post/' +${recruitment.id}}"></a></h2>
+                                    </div>
+                                    <div class="job-post-item-body d-block d-md-flex">
+                                        <div class="mr-3"><span class="icon-layers"></span> <a th:href="@{'/user/detail-company/' + ${recruitment.company.id}}" th:text="${recruitment.company.nameCompany}"></a></div>
+                                        <div class="mr-3"><span class="icon-my_location"></span> <span th:text="${recruitment.address}"></span></div>
+                                        <div class="mr-3"><span class="ion-android-person"> </span><span th:text="${recruitment.totalApplyPeople}"></span></div>
+                                    </div>
+                                </div>
+                                <input type="hidden" th:id="${'idRe'}+${recruitment.id}" th:value="${recruitment.id}">
+                                <div class="one-forth ml-auto d-flex align-items-center mt-4 md-md-0">
+                                    <div sec:authorize="not hasAuthority('RECRUITER')">
+                                        <a th:onclick="'save(' +${recruitment.id}+ ')'" class="icon text-center d-flex justify-content-center align-items-center icon mr-2">
+                                            <span class="icon-heart"></span>
+                                        </a>
+                                    </div >
+                                    <a sec:authorize="not hasAuthority('RECRUITER')" th:id="${'applyButton'}+${recruitment.id}" th:data-target="${'#exampleModal'}+${recruitment.id}" th:onclick="'showModal(' +${recruitment.id}+ ')'" class="btn btn-primary py-2" >Apply Job</a>
+                                    <a th:id="${'applyText'}+${recruitment.id}"></a>
+                                    <a style="color:green; text-decoration:none;font-weight:bold;" th:if="${status==11 or status==22}">Đã ứng tuyển</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end -->
+                        <div class="modal fade" th:id="${'exampleModal'}+${recruitment.id}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Ứng tuyển: <span th:text="${recruitment.title}"></span></h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form method="post" >
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <select th:id="${'choose'}+${recruitment.id}" th:onchange="'choosed(' +${recruitment.id}+ ')'" class="form-control" aria-label="Default select example">
+                                                        <option selected>Chọn phương thức nộp</option>
+                                                        <option value="1">Dùng cv đã cập nhật</option>
+                                                        <option value="2">Nộp cv mới</option>
+                                                    </select>
+                                                </div>
+                                                <div th:id="${'loai1'}+${recruitment.id}" style="display:none" class="col-12">
+                                                    <label for="fileUpload1"
+                                                           class="col-form-label">Giới thiệu:</label>
+                                                    <textarea id="fileUpload1" rows="10" cols="3" class="form-control"  th:id="${'text'}+${recruitment.id}" >
+                                                    </textarea>
+                                                </div>
+                                                <div th:id="${'loai2'}+${recruitment.id}" style="display:none" class="col-12">
+
+                                                    <label for="fileUpload2"
+                                                           class="col-form-label">Chọn cv:</label>
+                                                    <input id="fileUpload2" type="file" class="form-control"
+                                                           th:id="${'fileUpload'}+${recruitment.id}" name="file"  accept="application/pdf" required>
+                                                    <label for="fileUpload3"
+                                                           class="col-form-label">Giới thiệu:</label>
+                                                    <textarea id="fileUpload3" rows="10" cols="3" class="form-control"  th:id="${'text'}+${recruitment.id}" >
+
+                                                    </textarea>
+                                                </div>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                                <button type="button" th:id="${'button1'}+${recruitment.id}" style="display: none" th:onclick="'apply1(' +${recruitment.id}+ ')'" class="btn btn-primary">Nộp</button>
+                                                <button type="button" th:id="${'button2'}+${recruitment.id}" style="display: none" th:onclick="'apply(' +${recruitment.id}+ ')'" class="btn btn-primary">Nộp</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal -->
+                    </th:block>
+                </div>
+            </div>
+            <div class="col-lg-3 sidebar">
+                <div class="row justify-content-center pb-3">
+                    <div class="col-md-12 heading-section ">
+                        <h2 class="mb-4">Công ty nổi bật</h2>
+                    </div>
+                </div>
+                <th:block th:each="company, companyStart : ${companies}">
+                <div class="sidebar-box" th:if="${companyStart.index} < 2">
+                    <div th:if="${company.nameCompany!=null}">
+                        <a th:href="${'/user/detail-company/'}+${company.id}" class="company-wrap"><img th:src="${'/'+ company.logoPath}" class="img-fluid" th:alt="${company.nameCompany}+' logo'"></a>
+                        <div class="text p-3">
+                            <h3><a th:href="${'/user/detail-company/'}+${company.id}" th:text="${company.nameCompany}"></a></h3>
+                            <p><span class="number" style="color: black" th:text="${company.recruitments.size}"></span> <span>Vị trí tuyển dụng</span></p>
+                            <p><span class="number" style="color: black" th:text="${company.totalApplyPeople}"></span> <span>Người ứng tuyển</span></p>
+                        </div>
+                    </div>
+                </div>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</section>
+
+</body>
+<!--<script th:src="@{/assets/js/show-more-categories.js}"></script>-->
+<script th:src="@{/assets/js/save-apply-job.js}"></script>
+</html>
