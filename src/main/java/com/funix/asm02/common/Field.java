@@ -12,8 +12,8 @@ public class Field {
 
     public static final String IMAGE = "images";
     public static final String CV = "cvs";
-    public static final int ID_OF_RECRUITER = 1;
-    public static final int ID_OF_APPLICANT = 2;
+    public static final int ID_OF_RECRUITER = 2;
+    public static final int ID_OF_APPLICANT = 1;
     public static final int PAGE_SIZE_5 = 5;
     public static final int CATEGORY_INCREASE_NUMBER_CHOOSE = 1;
     public static final int CATEGORY_DECREASE_NUMBER_CHOOSE = -1;
