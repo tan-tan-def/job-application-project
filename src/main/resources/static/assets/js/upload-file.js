@@ -154,8 +154,8 @@ $(function () {
                             if(urlImage == "false"){
                                 showSwal("Cập nhật CV thất bại!","error")
                             }else{
-                                    showSwal("Cập nhật CV thành công!", "success")
-                                    reloadPage();
+                                showSwal("Cập nhật CV thành công!", "success")
+                                reloadPage();
                             }
 
                         },

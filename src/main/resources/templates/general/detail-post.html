@@ -150,7 +150,7 @@
                                     <p class="mb-4" style="width: 700px" th:utext="${applyPost.user.description}">.</p>
                                     <p>Ngày ứng tuyển: <span th:utext="${applyPost.createdAt}"></span> </p>
                                     <div class="row">
-                                        <p><a href="#" th:if="${applyPost.nameCv != null}" class="btn btn-primary" th:href="${'/'+applyPost.nameCvPath}" target="_blank" >Xem cv</a></p>
+                                        <p><a href="#" th:if="${applyPost.nameCv != null}" class="btn btn-primary" th:href="${applyPost.nameCv}" target="_blank" >Xem cv</a></p>
                                         <p th:if="${applyPost.status == 0}" style="margin-left: 10px">
                                             <a class="btn btn-outline-primary" th:href="@{'/recruiter/approve?userId=' + ${applyPost.user.id} + '&recruitmentId=' + ${recruitment.id} }">Duyệt</a>
                                         </p>

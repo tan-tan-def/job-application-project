@@ -32,7 +32,7 @@
                   <h5>Tên bài ứng tuyển:  <a style="text-decoration: none" th:href="${'/recruiter/detail-post/'}+${applyPost.recruitment.id}" th:utext="${applyPost.recruitment.title}" target="_blank"></a></h5>
                   <p>Ngày ứng tuyển: <span th:utext="${applyPost.createdAt}"></span> </p>
                   <div th:if="${applyPost.nameCv != null}" style="margin-left: 1px" class="row">
-                    <p><a th:href="${'/'+applyPost.nameCvPath}" target="_blank"  class="btn btn-primary">Xem cv</a></p>
+                    <p><a th:href="${applyPost.nameCv}" target="_blank"  class="btn btn-primary">Xem cv</a></p>
                     <p th:if="${applyPost.status == 0}" style="margin-left: 10px">
                       <a class="btn btn-outline-primary" th:href="@{'/recruiter/approve?userId=' + ${applyPost.user.id} + '&recruitmentId=' + ${applyPost.recruitment.id} }">Duyệt</a>
                     </p>
