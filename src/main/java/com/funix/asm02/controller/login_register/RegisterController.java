@@ -82,6 +82,7 @@ public class RegisterController {
             companyService.saveCompany(company);
             return "general/profile";
         }else if(roleUser.equals("")){
+            theModel.addAttribute("message", "Not Empty");
             return "login-register/register";
         }
         return "redirect:/login";

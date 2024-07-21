@@ -30,7 +30,7 @@
                     </label>
                 </div>
                 <div style="margin-left: 0px" id="divImage" th:if="${userInformation!=null}">
-                    <img id="avatar" height="100" width="100" style="border-radius: 50px" th:src="${userInformation.image != null ? '/' + userInformation.imagePath : 'https://st.quantrimang.com/photos/image/072015/22/avatar.jpg'}">
+                    <img id="avatar" height="100" width="100" style="border-radius: 50px" th:src="${userInformation.image != null ? userInformation.image : 'https://st.quantrimang.com/photos/image/072015/22/avatar.jpg'}">
                 </div>
             </div>
         </div>
@@ -80,7 +80,7 @@
                         </div>
                     </div>
                     <p id="cvName1" th:if="${Cv!=null}" th:text="${Cv != null ? Cv.fileName :'Chưa cập nhật'}"></p>
-                    <a id="nameCv" class="btn btn-primary" th:if="${Cv !=null}" th:href="${'/'+Cv.fileNamePath}" target="_blank">Xem cv</a>
+                    <a id="nameCv" class="btn btn-primary" th:if="${Cv !=null}" th:href="${Cv.fileName}" target="_blank">Xem cv</a>
                     <a id="deleteCv" style="margin-left: 20px" class="btn btn-danger" th:if="${Cv !=null}" data-toggle="modal" data-target="#exampleModal" >Xóa cv</a>
                 </div>
 
@@ -227,7 +227,7 @@
                         Chọn logo<input type="file" id="fileUpload2" accept="image/png, image/jpeg, image/jpg" hidden required>
                     </label>
                     <div id="divLogo">
-                        <img id="avatar1" height="100" width="100" style="border-radius: 50px" th:src="${companyInformation.logo != null ? '/' + companyInformation.logoPath : 'https://st.quantrimang.com/photos/image/072015/22/avatar.jpg'}">
+                        <img id="avatar1" height="100" width="100" style="border-radius: 50px" th:src="${companyInformation.logo != null ? companyInformation.logo : 'https://st.quantrimang.com/photos/image/072015/22/avatar.jpg'}">
                     </div>
                 </div>
 
@@ -263,7 +263,7 @@
                                 </div>
 
                                 <div style="margin-left: 0px" id="divImag1">
-                                    <img id="avatar1-same" height="100" width="100" style="border-radius: 50px;margin-bottom: 15px" th:src="${companyInformation.logo != null ? '/' + companyInformation.logoPath : 'https://st.quantrimang.com/photos/image/072015/22/avatar.jpg'}">
+                                    <img id="avatar1-same" height="100" width="100" style="border-radius: 50px;margin-bottom: 15px" th:src="${companyInformation.logo != null ? companyInformation.logo : 'https://st.quantrimang.com/photos/image/072015/22/avatar.jpg'}">
                                 </div>
                                 <div class="row form-group" >
                                     <div class="col-md-12">

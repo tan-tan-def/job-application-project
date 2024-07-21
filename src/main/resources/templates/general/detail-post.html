@@ -23,7 +23,7 @@
             <div class="col-lg-8 mb-4 mb-lg-0">
                 <div class="d-flex align-items-center">
                     <div class="border p-2 d-inline-block mr-3 rounded">
-                        <img width="100" height="100" th:src="@{'/'+${recruitment.company.logoPath}}" alt="Image">
+                        <img width="100" height="100" th:src="@{${recruitment.company.logo}}" alt="Image">
                     </div>
                     <div>
                         <h2></h2>
@@ -142,7 +142,7 @@
                         <div class="col-md-12" style="box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 10px;margin: 20px auto;">
                             <div class="team d-md-flex p-4 bg-white">
                                 <h5 style="font-size: 18px; font-weight: bold; color: #333;" th:text="${(currentPage - 1) * 5 + iterStat.index+1}" class="circle"></h5>
-                                <img class="img" th:src="${applyPost.user.image != null ? '/' + applyPost.user.imagePath : 'https://st.quantrimang.com/photos/image/072015/22/avatar.jpg'}">
+                                <img class="img" th:src="${applyPost.user.image != null ? applyPost.user.image : 'https://st.quantrimang.com/photos/image/072015/22/avatar.jpg'}">
                                 <div class="text pl-md-4">
                                     <h5 class="location mb-0" th:text="${applyPost.user.fullName}"></h5>
                                     <p style="display: block;color: black" th:text="${applyPost.user.address}"></p>

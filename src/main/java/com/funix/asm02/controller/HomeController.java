@@ -18,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -132,14 +133,18 @@ public class HomeController {
         return "general/detail-company";
     }
     @PostMapping("/upload-avatar")
-    public @ResponseBody String uploadAvatar(@RequestParam("email") String email, @RequestParam("file")MultipartFile file){
+    public @ResponseBody String uploadAvatar(@RequestParam("email") String email, @RequestParam("file")MultipartFile file) throws IOException {
         User user = userService.findByEmail(email);
         if(!file.isEmpty()){
-            user.setImage(file.getOriginalFilename());
-            uploadFileService.store(file, Field.IMAGE, user.getId());
+            String urlImage = uploadFileService.upload(file);
+//            user.setImage(file.getOriginalFilename());
+            user.setImage(urlImage);
+//            uploadFileService.store(file, Field.IMAGE, user.getId());
             userService.saveUser(user);
             //System.out.println("Lớp HomeController" + user.getImagePath());
-            return "/"+user.getImagePath();
+//            return "/"+user.getImagePath();
+            return user.getImage();
+
         }
         return "Error";
     }

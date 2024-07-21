@@ -1,4 +1,4 @@
-package com.funix.asm02.security;
+package com.funix.asm02.config;
 
 import com.funix.asm02.userDetail.CustomUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,60 +1,61 @@
 package com.funix.asm02.service.uploadFile;
 
-import com.funix.asm02.entity.CV;
-import com.funix.asm02.service.cv.CVService;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.security.Principal;
-
+import java.util.UUID;
 @Service
-public class UploadFileServiceImpl implements UploadFileService{
-    private final Path rootLocation;
-    private CVService cvService;
+public class UploadFileServiceImpl implements UploadFileService {
+    private Cloudinary cloudinary;
+
     @Autowired
-    public UploadFileServiceImpl(CVService cvService) {
-        this.rootLocation = Paths.get(".","uploads");
-        this.cvService = cvService;
+    public UploadFileServiceImpl(Cloudinary cloudinary) {
+        this.cloudinary = cloudinary;
     }
 
     @Override
-    public void store(MultipartFile file, String type, int id) {
-        /*
-        type: cv or images
-         */
-        Path newPath = this.rootLocation.resolve(type).resolve(String.valueOf(id));
-        try{
-            if(!Files.exists(newPath)){
-                Files.createDirectories(newPath);
-            }
-            try(InputStream inputStream = file.getInputStream()){
-                Path destinationPath = newPath.resolve(
-                        Paths.get(file.getOriginalFilename())).normalize().toAbsolutePath();
-                Files.copy(inputStream,destinationPath, StandardCopyOption.REPLACE_EXISTING);
-            }
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+    public String upload(MultipartFile file) throws IOException {
+        assert file.getOriginalFilename() != null;
+        String publicValue = generatePublicValue(file.getOriginalFilename());
+        String extension = getFileName(file.getOriginalFilename())[1];
+        File fileUpload = convert(file);
+        cloudinary.uploader().upload(fileUpload, ObjectUtils.asMap("public_id", publicValue));
+        cleanDisk(fileUpload);
+        cloudinary.url().generate();
+        return cloudinary.url().generate(StringUtils.join(publicValue, ".", extension));
     }
-
-    @Override
-    public void delete(int idCv, String type, int id) {
-
-        CV cv = cvService.findById(idCv);
-        Path filePath = this.rootLocation.resolve(type).resolve(String.valueOf(id)).resolve(cv.getFileName());
+    private void cleanDisk(File file) {
         try {
+//            log.info("file.toPath(): {}", file.toPath());
+            Path filePath = file.toPath();
             Files.delete(filePath);
-
         } catch (IOException e) {
-            throw new RuntimeException(e);
+//            log.error("Error");
+            System.out.println("Error ");
         }
+    }
+    private File convert(MultipartFile file) throws IOException {
+        assert file.getOriginalFilename() != null;
+        File convFile = new File(StringUtils.join(generatePublicValue(file.getOriginalFilename()), getFileName(file.getOriginalFilename())[1]));
+        try(InputStream is = file.getInputStream()) {
+            Files.copy(is, convFile.toPath());
+        }
+        return convFile;
+    }
+    public String generatePublicValue(String originalName){
+        String fileName = getFileName(originalName)[0];
+        return StringUtils.join(UUID.randomUUID().toString(), "_", fileName);
+    }
+    public String[] getFileName(String originalName) {
+        return originalName.split("\\.");
     }
 }
-

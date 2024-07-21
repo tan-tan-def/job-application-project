@@ -14,8 +14,6 @@ import com.funix.asm02.service.user.UserService;
 import com.funix.asm02.userDetail.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -182,15 +181,18 @@ public class RecruiterController {
     }
     //Upload logo company
     @PostMapping("/upload-logo-company")
-    public @ResponseBody String uploadLogoCompany(@RequestParam("file") MultipartFile file, Principal principal){
+    public @ResponseBody String uploadLogoCompany(@RequestParam("file") MultipartFile file, Principal principal) throws IOException {
         User user = userService.userAuthentication(principal);
         if(!file.isEmpty()){
             Company company = companyService.findByUser(user);
-            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-            company.setLogo(fileName);
-            uploadFileService.store(file,Field.IMAGE,user.getId());
+            String urlImage = uploadFileService.upload(file);
+//            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+//            company.setLogo(fileName);
+            company.setLogo(urlImage);
+
+//            uploadFileService.store(file,Field.IMAGE,user.getId());
             companyService.saveCompany(company);
-            return "/" + company.getLogoPath();
+            return company.getLogo();
         }
         return "Error";
     }

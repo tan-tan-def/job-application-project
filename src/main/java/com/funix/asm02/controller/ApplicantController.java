@@ -13,8 +13,6 @@ import com.funix.asm02.service.user.UserService;
 import com.funix.asm02.userDetail.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -104,24 +103,29 @@ public class ApplicantController {
     @PostMapping("/deleteCv")
     public String deleteCV(@RequestParam("idCv") int idCv, Principal principal){
         User user = userService.userAuthentication(principal);
-        uploadFileService.delete(idCv, Field.CV, user.getId());
+//        uploadFileService.delete(idCv, Field.CV, user.getId());
         cvService.deleteById(idCv);
         return "redirect:/applicant/profile";
     }
 
     //Upload cv
     @PostMapping("/upload-cv")
-    public @ResponseBody String uploadCV(@RequestParam("file") MultipartFile file, Principal principal){
+    public @ResponseBody String uploadCV(@RequestParam("file") MultipartFile file, Principal principal) throws IOException {
         User user = userService.userAuthentication(principal);
         if(!file.isEmpty()){
             CV cvStatusOne = cvService.findByUserAndStatus(user, Field.CV_STATUS_1);
             if(cvStatusOne!=null){
                 cvStatusOne.setStatus(Field.CV_STATUS_0);
             }
-            CV cv = new CV(user,file.getOriginalFilename(),Field.CV_STATUS_1);
+            String urlCV = uploadFileService.upload(file);
+//            CV cv = new CV(user,file.getOriginalFilename(),Field.CV_STATUS_1);
+            CV cv = new CV(user,urlCV,Field.CV_STATUS_1);
             cvService.save(cv);
-            uploadFileService.store(file,Field.CV, user.getId());
-            return "/"+ cv.getFileNamePath();
+//            uploadFileService.store(file,Field.CV, user.getId());
+            System.out.println(urlCV);
+//            return "/"+ cv.getFileNamePath();
+            return cv.getFileName();
+
         }
         return "false";
     }
@@ -146,25 +150,26 @@ public class ApplicantController {
     //Apply job with new CV
     @PostMapping("/apply-job")
     public @ResponseBody String applyJobCheck(@RequestParam("idRe") Integer idRe, @RequestParam("text") String text,
-                                         @RequestParam("file") MultipartFile file, Principal principal){
+                                         @RequestParam("file") MultipartFile file, Principal principal) throws IOException {
         if(principal==null){
             return "false";
         }
         //find user and recruitment
         User user = userService.userAuthentication(principal);
         Recruitment recruitment = recruitmentService.findById(idRe);
-        String fileName = file.getOriginalFilename();
+//        String fileName = file.getOriginalFilename();
+        String urlImage = uploadFileService.upload(file);
 
         //save applyPost
-        ApplyPost applyPost = new ApplyPost(user,recruitment,fileName,text, Field.APPLY_POST_NOT_REVIEWED);
+        ApplyPost applyPost = new ApplyPost(user,recruitment,urlImage,text, Field.APPLY_POST_NOT_REVIEWED);
         applyPostService.saveApplyPost(applyPost);
 
         //save cv
-        CV cv = new CV(user,fileName, 0);
+        CV cv = new CV(user,urlImage, 0);
         cvService.save(cv);
 
         //upload file int src/main/resources/static/cv/**
-        uploadFileService.store(file,Field.CV,user.getId());
+//        uploadFileService.store(file,Field.CV,user.getId());
 
         changeTotalApplyPeople(recruitment);
         return "true";

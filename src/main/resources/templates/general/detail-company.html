@@ -22,7 +22,7 @@
             <div class="col-lg-8 mb-4 mb-lg-0">
                 <div class="d-flex align-items-center">
                     <div class="border p-2 d-inline-block mr-3 rounded">
-                        <img width="100" height="100" th:src="@{'/'+${company.logoPath}}" th:alt="${company.nameCompany}">
+                        <img width="100" height="100" th:src="@{${company.logo}}" th:alt="${company.nameCompany}">
                     </div>
                     <div>
                         <h2 th:text="${company.nameCompany}"></h2>

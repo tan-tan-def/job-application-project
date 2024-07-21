@@ -191,7 +191,7 @@
                 <th:block th:each="company, companyStart : ${companies}">
                 <div class="sidebar-box" th:if="${companyStart.index} < 2">
                     <div th:if="${company.nameCompany!=null}">
-                        <a th:href="${'/user/detail-company/'}+${company.id}" class="company-wrap"><img th:src="${'/'+ company.logoPath}" class="img-fluid" th:alt="${company.nameCompany}+' logo'"></a>
+                        <a th:href="${'/user/detail-company/'}+${company.id}" class="company-wrap"><img th:src="${company.logo}" class="img-fluid" th:alt="${company.nameCompany}+' logo'"></a>
                         <div class="text p-3">
                             <h3><a th:href="${'/user/detail-company/'}+${company.id}" th:text="${company.nameCompany}"></a></h3>
                             <p><span class="number" style="color: black" th:text="${company.recruitments.size}"></span> <span>Vị trí tuyển dụng</span></p>
