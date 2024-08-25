@@ -105,10 +105,9 @@ public class UserServiceImpl implements UserService {
         saveUser(user);
         return roleUser;
     }
-
     @Override
     public void sendVerificationEmail(User user, String siteURL) throws MessagingException, UnsupportedEncodingException {
-        String subject = "Please verify your registration";
+        String subject = "Please verify your change password";
         String senderName = "Wizardry Employment";
         String mailContent = "<p>Dear "+user.getFullName()+",</p>";
         mailContent += "<p> Please click the link below to verify to your registration:<p>";

@@ -41,7 +41,6 @@ public class SecurityConfig implements WebMvcConfigurer {
                                 .requestMatchers("/recruiter/**").hasAuthority("RECRUITER")
                                 .requestMatchers("/applicant/**").hasAuthority("APPLICANT")
                                 .anyRequest().authenticated()
-
                 )
                 .formLogin(
                         login -> login
