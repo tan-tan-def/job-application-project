@@ -7,6 +7,7 @@ import com.funix.asm02.entity.Role;
 import com.funix.asm02.entity.User;
 import com.funix.asm02.entity.UserRole;
 import com.funix.asm02.service.company.CompanyService;
+import com.funix.asm02.service.redis.RedisService;
 import com.funix.asm02.service.role.RoleService;
 import com.funix.asm02.service.user.UserService;
 import com.funix.asm02.service.userRole.UserRoleService;
@@ -33,12 +34,14 @@ public class RegisterController {
     private RoleService roleService;
     private UserRoleService userRoleService;
     private CompanyService companyService;
+    private RedisService redisService;
     @Autowired
-    public RegisterController(UserService userService, RoleService roleService, UserRoleService userRoleService, CompanyService companyService){
+    public RegisterController(UserService userService, RoleService roleService, UserRoleService userRoleService, CompanyService companyService, RedisService redisService){
         this.userService = userService;
         this.roleService = roleService;
         this.userRoleService = userRoleService;
         this.companyService = companyService;
+        this.redisService = redisService;
     }
     @InitBinder
     public void initBinder(WebDataBinder dataBinder){
@@ -63,6 +66,7 @@ public class RegisterController {
         if(!theBindingResult.hasErrors()) {
             Role role = roleService.findById(roleId);
 
+            redisService.saveUser(user.getEmail(),user);
             roleUser = userService.registerUser(user,role);
 
             String siteURL = Utility.getSiteURL(request);

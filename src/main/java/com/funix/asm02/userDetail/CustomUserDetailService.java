@@ -2,8 +2,8 @@ package com.funix.asm02.userDetail;
 
 import com.funix.asm02.entity.User;
 import com.funix.asm02.entity.UserRole;
+import com.funix.asm02.service.redis.RedisService;
 import com.funix.asm02.service.user.UserService;
-import com.funix.asm02.service.userRole.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,18 +19,24 @@ import java.util.Set;
 @Service
 public class CustomUserDetailService implements UserDetailsService  {
     private UserService userService;
-    private UserRoleService userRoleService;
+    private RedisService redisService;
     @Autowired
-    public CustomUserDetailService(UserService userService, UserRoleService userRoleService) {
+    public CustomUserDetailService(UserService userService, RedisService redisService) {
         this.userService = userService;
-        this.userRoleService = userRoleService;
+        this.redisService = redisService;
     }
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userService.findByEmail(email);
+        User user = redisService.getUser(email);
         if(user==null){
-            throw new UsernameNotFoundException("User not found");
+            user = userService.findByEmail(email);
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found");
+            }else{
+                redisService.saveUser(user.getEmail(), user);
+            }
         }
+
         Collection<GrantedAuthority> grantedAuthorities = new HashSet<>();
         Set<UserRole> userRoles = user.getUserRoles();
         for(UserRole userRole:userRoles){
